@@ -45,6 +45,21 @@ class LedgerServiceTest {
     }
 
     @Test
+    void tieredFeePolicyChargesOnlyAboveThreshold() {
+        // Free up to £100.00 (10_000p), then 1.50% (150 bps) on the excess
+        FeePolicy tiered = FeePolicy.tieredFee(10_000L, 150);
+        CheckingAccount tieredAcct = new CheckingAccount("CHK-02", "Alex M.", 50_000L, 0L, tiered);
+
+        // £80.00 withdrawal is below threshold -> 0p fee
+        tieredAcct.withdraw("W-301", 8_000L, "Small withdrawal");
+        assertEquals(42_000L, tieredAcct.getBalancePence());
+
+        // £200.00 withdrawal has £100.00 excess -> 1.50% of 10_000p = 150p (£1.50) fee
+        tieredAcct.withdraw("W-302", 20_000L, "Large withdrawal");
+        assertEquals(21_850L, tieredAcct.getBalancePence());
+    }
+
+    @Test
     void savingsAccountEnforcesMinimumReserveAndPaysInterest() {
         // Minimum reserve is £100.00 (10_000p), so withdrawing £1950.00 from £2000.00 must fail
         assertThrows(

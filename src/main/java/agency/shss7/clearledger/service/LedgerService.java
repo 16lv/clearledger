@@ -1,7 +1,10 @@
 package agency.shss7.clearledger.service;
 
 import agency.shss7.clearledger.model.Account;
+import agency.shss7.clearledger.model.CheckingAccount;
+import agency.shss7.clearledger.model.FeePolicy;
 import agency.shss7.clearledger.model.SavingsAccount;
+import agency.shss7.clearledger.model.TransactionEntry;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -80,5 +83,50 @@ public final class LedgerService {
         return accounts.values().stream()
             .mapToLong(Account::getBalancePence)
             .sum();
+    }
+
+    private static String formatGbp(long pence) {
+        long abs = Math.abs(pence);
+        String sign = pence < 0 ? "-" : "";
+        return String.format("%sGBP %d.%02d", sign, abs / 100, abs % 100);
+    }
+
+    public static void main(String[] args) {
+        LedgerService ledger = new LedgerService();
+        CheckingAccount checking = new CheckingAccount(
+            "CHK-01", "Sheikh S.", 15_000L, 5_000L, FeePolicy.flatFee(25L)
+        );
+        SavingsAccount savings = new SavingsAccount(
+            "SAV-01", "Sheikh S.", 200_000L, 480, 10_000L
+        );
+
+        ledger.registerAccount(checking);
+        ledger.registerAccount(savings);
+
+        checking.withdraw("W-101", 18_000L, "Cloud server hosting invoice");
+        ledger.transfer("SAV-01", "CHK-01", 25_000L, "Current account top-up");
+        ledger.runMonthlyInterestCycle();
+
+        System.out.println("=== CLEARLEDGER ACCOUNT & STATEMENT SUMMARY ===");
+        for (Account acc : ledger.listAccounts()) {
+            System.out.printf(
+                "%s [%s] Owner: %s | Closing Balance: %s%n",
+                acc.getAccountId(),
+                acc.getAccountTypeLabel(),
+                acc.getOwnerName(),
+                formatGbp(acc.getBalancePence())
+            );
+            for (TransactionEntry entry : acc.getStatement()) {
+                System.out.printf(
+                    "  %-12s %-11s %12s -> After: %12s (%s)%n",
+                    entry.transactionId(),
+                    entry.type(),
+                    formatGbp(entry.amountPence()),
+                    formatGbp(entry.balanceAfterPence()),
+                    entry.description()
+                );
+            }
+            System.out.println();
+        }
     }
 }
