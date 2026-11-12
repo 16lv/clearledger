@@ -1,12 +1,12 @@
-# ClearLedger
+# Java Banking Ledger (java-banking-ledger)
 
-[![CI](https://github.com/16lv/clearledger/actions/workflows/ci.yml/badge.svg)](https://github.com/16lv/clearledger/actions/workflows/ci.yml)
+[![CI](https://github.com/16lv/java-banking-ledger/actions/workflows/ci.yml/badge.svg)](https://github.com/16lv/java-banking-ledger/actions/workflows/ci.yml)
 
-**ClearLedger** is a Java 21 object-oriented banking and transaction ledger engine developed during my second year of Computer Science at Cardiff University. It models current (`CheckingAccount`) and savings (`SavingsAccount`) accounts, pluggable withdrawal fee strategies (`FeePolicy`), immutable audit statements (`TransactionEntry`), and atomic inter-account transfers using integer pence arithmetic.
+**Java Banking Ledger** ($(System.Collections.Hashtable.newRepo)) is a Java 21 object-oriented banking and transaction ledger engine developed during my second year of Computer Science at Cardiff University. It models current (`CheckingAccount`) and savings (`SavingsAccount`) accounts, pluggable withdrawal fee strategies (`FeePolicy`), immutable audit statements (`TransactionEntry`), and atomic inter-account transfers using integer pence arithmetic.
 
 ## Why I Built It
 
-In our Year 2 Object-Oriented Programming module we studied how inheritance, encapsulation, and polymorphism apply to financial domain models—and why storing currency in binary floating-point (`double`) leads to subtle rounding errors. I built ClearLedger to apply those concepts in a self-contained Java 21 library without hiding the domain logic behind a web framework.
+In our Year 2 Object-Oriented Programming module we studied how inheritance, encapsulation, and polymorphism apply to financial domain models—and why storing currency in binary floating-point (`double`) leads to subtle rounding errors. I built Java Banking Ledger to apply those concepts in a self-contained Java 21 library without hiding the domain logic behind a web framework.
 
 ## Architecture & OOP Design Decisions
 
